@@ -142,9 +142,6 @@ def main():
 
     args = parser.parse_args()
 
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    torch.set_default_device(device)
-
     # set random seed
     set_seed(args.seed)
 
@@ -169,8 +166,8 @@ def main():
 
     print(f"saving zt and xt to {save_dir}/{save_name}...")
     data = {
-        "zt": zt.to("cpu"),
-        "xt": xt.to("cpu")
+        "zt": zt,
+        "xt": xt
     }
     np.savez(os.path.join(save_dir, save_name), **data)
 
