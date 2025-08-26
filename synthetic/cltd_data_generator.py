@@ -13,6 +13,7 @@ def set_seed(seed):
     torch.cuda.manual_seed(seed)
     torch.cuda.manual_seed_all(seed)
 
+
 def gen_masked_trans(nlatents, mask, cond_threshold):
     X = np.random.uniform(0, 2, (nlatents, nlatents)) - 1
     for i in range(nlatents):
@@ -27,7 +28,8 @@ def gen_masked_trans(nlatents, mask, cond_threshold):
     
     return X * mask
 
-def gen_synthetic_data(nlags, nnlayer, nlatents, length, sample_size, B_sparsity, M_sparsity, device, seed, noise_mode, neg_slope):
+
+def gen_synthetic_data(nlags, nnlayer, nlatents, length, sample_size, B_sparsity, M_sparsity, seed, noise_mode, neg_slope, noise_dist):
     # compute threshold for the conditional value
     print("compute threshold for the conditional value...")
     conds = []
@@ -65,7 +67,12 @@ def gen_synthetic_data(nlags, nnlayer, nlatents, length, sample_size, B_sparsity
     
     # generate terms before the output zt, named by yt and in a reversed order
     print("generate terms before the output zt, named by yt and in a reversed order...")
-    yt = np.random.normal(0, 1, (nlags, nlatents, sample_size))
+    if noise_dist == 'normal':
+        yt = np.random.normal(loc=0, scale=1, size=(nlags, nlatents, sample_size))
+    elif noise_dist == 'uniform':
+        yt = np.random.uniform(low=0, high=1, size=(nlags, nlatents, sample_size))
+    else: # noise_dist == laplace
+        yt = np.random.laplace(loc=0, scale=1, size=(nlags, nlatents, sample_size))
     yt = (yt - np.mean(yt, axis=-1, keepdims=True)) / np.std(yt, axis=-1, keepdims=True)
 
     # generate zt in left-to-right manner (top-down contraint has been implemented in B and M masks) by yt, Bs, and M
@@ -75,10 +82,20 @@ def gen_synthetic_data(nlags, nnlayer, nlatents, length, sample_size, B_sparsity
     for t in range(length):
         # generate noise terms
         if noise_mode == 1:
-            _noise_zt = [np.random.normal(0, 1+0.1*(nlatents-z), (sample_size,)) for z in range(nlatents)]
+            if noise_dist == 'normal':
+                _noise_zt = [np.random.normal(loc=0, scale=1+0.1*(nlatents-z), size=(sample_size,)) for z in range(nlatents)]
+            elif noise_dist == 'uniform':
+                _noise_zt = [np.random.uniform(low=0, high=1+0.5*(nlatents-z), size=(sample_size,)) for z in range(nlatents)]
+            else: # noise_dist == laplace
+                _noise_zt = [np.random.laplace(loc=0, scale=1+0.1*(nlatents-z), size=(sample_size,)) for z in range(nlatents)]
             noise_zt = np.stack(_noise_zt, axis=0)
         else:
-            noise_zt = np.random.normal(0, 1, (nlatents, sample_size))
+            if noise_dist == 'normal':
+                noise_zt = np.random.normal(loc=0, scale=1, size=(nlatents, sample_size))
+            elif noise_dist == 'uniform':
+                noise_zt = np.random.uniform(low=0, high=1, size=(nlatents, sample_size))
+            else: # noise_dist == laplace
+                noise_zt = np.random.laplace(loc=0, scale=1, size=(nlatents, sample_size))
         
         # compute zt
         _zt = 0
@@ -116,6 +133,7 @@ def main():
     parser.add_argument("--length", type=int, default=5)
     parser.add_argument("--B-sparsity", type=float, default=0.4)
     parser.add_argument("--M-sparsity", type=float, default=0.4)
+    parser.add_argument("--noise-dist", type=str, default='uniform', choices=['normal', 'laplace', 'uniform'], help='set the distribution class for all the noise terms in the data model')
     parser.add_argument("--noise-mode", type=int, choices=[0,1], default=1, help='0=same variance for all noise terms; 1=highist variance for z1, grandually increases')
     parser.add_argument("--nnlayer", type=int, default=3, help='number of nn layers for mixing function')
     parser.add_argument("--neg-slope", type=float, default=0.2)
@@ -125,6 +143,7 @@ def main():
     args = parser.parse_args()
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    torch.set_default_device(device)
 
     # set random seed
     set_seed(args.seed)
@@ -134,10 +153,10 @@ def main():
                                 length=args.length,
                                 nnlayer=args.nnlayer,
                                 sample_size=args.sample_size,
-                                device=device,
                                 B_sparsity=args.B_sparsity,
                                 M_sparsity=args.M_sparsity,
                                 seed=args.seed,
+                                noise_dist=args.noise_dist,
                                 noise_mode=args.noise_mode,
                                 neg_slope=args.neg_slope)
     
@@ -150,8 +169,9 @@ def main():
     xt_name = f"{'_'.join(parts)}_xt"
 
     print(f"saving zt and xt to {save_dir}...")
-    np.save(os.path.join(save_dir, zt_name), zt)
-    np.save(os.path.join(save_dir, xt_name), xt)
+    np.save(os.path.join(save_dir, zt_name), zt.to('cpu'))
+    np.save(os.path.join(save_dir, xt_name), xt.to('cpu'))
+
 
 if __name__ == "__main__":
     main()
