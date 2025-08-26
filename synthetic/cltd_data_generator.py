@@ -165,12 +165,14 @@ def main():
 
     args_dict = vars(args)
     parts = [f"{k}={v}" for k, v in sorted(args_dict.items())]
-    zt_name = f"{'_'.join(parts)}_zt"
-    xt_name = f"{'_'.join(parts)}_xt"
+    save_name = f"data_{'_'.join(parts)}.npz"
 
-    print(f"saving zt and xt to {save_dir}...")
-    np.save(os.path.join(save_dir, zt_name), zt.to('cpu'))
-    np.save(os.path.join(save_dir, xt_name), xt.to('cpu'))
+    print(f"saving zt and xt to {save_dir}/{save_name}...")
+    data = {
+        "zt": zt.to("cpu"),
+        "xt": xt.to("cpu")
+    }
+    np.savez(os.path.join(save_dir, save_name), **data)
 
 
 if __name__ == "__main__":
