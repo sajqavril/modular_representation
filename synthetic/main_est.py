@@ -5,10 +5,10 @@ import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 
-from models import SeqEstARModel
+from models import SeqEstARModel_PreZT, SeqEstARModel_CurrentPreZT
 from utils import entropy_kde_torch, entropy_gaussian_torch, generate_lambda_choices
 
-def train(xt, l_f_list, l_m_list, l_mi_list, nlags, hid_dim, runs, device, lr=0.001, wd=5e-5, epochs=10_000):
+def train(xt, l_f_list, l_m_list, l_mi_list, nlags, hid_dim, runs, device, lr=0.001, wd=5e-5, epochs=10_000, option=1):
     print(f"[TRAIN] Start training for nlags={nlags}, hid_dim={hid_dim}")
     length, xt_dim, batch_size = xt.shape
     pre_zt_list = []
@@ -18,13 +18,22 @@ def train(xt, l_f_list, l_m_list, l_mi_list, nlags, hid_dim, runs, device, lr=0.
         best_loss = 999999
         for run in range(runs):
             print(f"  [TRAIN] Run {run+1}/{runs} for layer {layer}")
-            layer_model = SeqEstARModel(
-                nlags=nlags, 
-                xt_dim=xt_dim,
-                est_zt_dim=1,
-                hid_dim=hid_dim,
-                n_pre_zt=len(pre_zt_list)
-            ).to(device)
+            if option == 2:
+                layer_model = SeqEstARModel_CurrentPreZT(
+                    nlags=nlags, 
+                    xt_dim=xt_dim,
+                    est_zt_dim=1,
+                    hid_dim=hid_dim,
+                    n_pre_zt=len(pre_zt_list)
+                ).to(device)
+            else:
+                layer_model = SeqEstARModel_PreZT(
+                    nlags=nlags, 
+                    xt_dim=xt_dim,
+                    est_zt_dim=1,
+                    hid_dim=hid_dim,
+                    n_pre_zt=len(pre_zt_list)
+                ).to(device)
 
             layer_model.train()
             optimizer = torch.optim.Adam(params=layer_model.parameters(), lr=lr, weight_decay=wd)
@@ -75,6 +84,7 @@ def main():
     parser.add_argument("--data-dir", type=str, default="datasets", help='the path of the dir of the synthetic data; all datasets will be processed')
     parser.add_argument("--runs", type=int, default=5, help='the number of runs to avoid local solutions on each synthetic dataset')
     parser.add_argument("--res-dir", type=str, default="est_figures", help='the path to save the output figures')    
+    parser.add_argument("--option", type=int, default=1, choices=[1, 2])
     args = parser.parse_args()
 
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -126,7 +136,8 @@ def main():
                         nlags=nlags,
                         hid_dim=hid_dim,
                         runs=args.runs,
-                        device=device
+                        device=device,
+                        option=args.option
                     )
                     l2_dist_list = evaluate(est_zt_list=est_zt_list, zt=zt)
                     ax.plot(l2_dist_list, alpha=0.5, marker="*", label=f"lambda-{lambda_choice}")

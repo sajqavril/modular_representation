@@ -1,0 +1,11 @@
+# Slurm job files (any file starting with "slurm")
+slurm*
+
+# Jupyter notebooks
+*.ipynb
+
+# NumPy archives
+*.npz
+
+# Images
+*.png
