@@ -19,3 +19,7 @@ __pycache__/
 
 # archived
 synthetic_archived/
+
+
+# vscode
+.vscode
