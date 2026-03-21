@@ -1,1 +1,1 @@
-# continue_learning_for_temporal_data
+# Modular representation for continue learning

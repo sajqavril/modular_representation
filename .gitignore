@@ -9,3 +9,13 @@ slurm*
 
 # Images
 *.png
+
+# CPython / Python build artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.so
+
+# archived
+synthetic_archived/

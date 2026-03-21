@@ -6,12 +6,50 @@
     "configurations": [
 
         {
-            "name": "cltd-poc",
+            "name": "cltd-general",
             "type": "debugpy",
             "request": "launch",
-            "program": "synthetic/main_poc.py",
+            "program": "synthetic_new/synthetic_nonlinear_general/train_single_layer.py",
             "console": "integratedTerminal",
-            "args": ["--data-dir", "synthetic/datasets"]
-        }
+            "args": ["--data_path", "synthetic_new/synthetic_nonlinear_general/data_generators/data/laplace_multi_2_1.npz",
+        "--lr", "0.001",
+        "--seed", "44",
+        "--batch_size", "1024",
+        "--w_rec", "0.0",
+        "--w_nq0", "1.0",
+        "--w_nq1", "0.",
+        "--w_cmi", "0.0",
+        // "--w_gate_delay", "0.",
+        // "--w_gate_inst", "0.",
+        "--epochs", "100",
+        "--flow_layers", "1"
+    ]
+        },
+        {
+            "name": "cltd-jepa",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "synthetic_new/synthetic_nonlinear_general/train_jepa_simple_layer.py",
+            "console": "integratedTerminal",
+            "args": ["--data_path", "/home/jiaqisun/models/proj_cltd/continue_learning_for_temporal_data/synthetic_new/synthetic_linear_no_M/data/gaussian_3_same.npz",
+        "--lr", "1e-5",
+        "--seed", "40",
+        "--z_dim", "1",
+        "--batch_size", "1024",
+        "--w_cmi", "0.",
+        // "--w_gate_delay", "0.",
+        // "--w_gate_inst", "0.",
+        "--epochs", "100",
+        // "--use_var_reg"
+    ]
+        },
+        {
+            "name": "data_gen",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "/home/jiaqisun/models/proj_cltd/continue_learning_for_temporal_data/synthetic_estimate_single_layer/data/temporal_generator.py",
+            "console": "integratedTerminal",
+            "args": ["--preset", "linear_gaussian"]
+        },
     ]
 }
