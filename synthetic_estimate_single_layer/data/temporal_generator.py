@@ -1,3 +1,4 @@
+import os
 import argparse
 import numpy as np
 from dataclasses import dataclass
@@ -91,6 +92,8 @@ def apply_nonlinearity(x: np.ndarray, kind: Nonlinearity) -> np.ndarray:
         return np.tanh(x)
     if kind == "relu":
         return np.maximum(0, x)
+    if kind == "leakyrelu":
+        return np.where(x > 0, x, 0.01 * x)
     raise ValueError(f"Unknown nonlinearity: {kind}")
 
 
@@ -145,7 +148,7 @@ def make_layered_transition(
     d = n_layers * n_vars_per_layer
 
     # 1) random weights
-    mag = rng.uniform(0.6, 1.5, size=(d, d))
+    mag = rng.uniform(0.6, 0.8, size=(d, d))
     sign = rng.choice([-1.0, 1.0], size=(d, d))
     W = sign * mag
 
@@ -178,64 +181,123 @@ def make_mixing_matrix(n: int, d: int, rng: np.random.Generator) -> np.ndarray:
 
 def generate_process(
     cfg: TemporalProcessConfig,
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray, Optional[np.ndarray]]:
+) -> Tuple[np.ndarray, np.ndarray, Optional[np.ndarray], Optional[np.ndarray]]:
     """
-    z_t = sum_{tau=1..L} B_tau h(z_{t-tau}) + eps_t
+    Linear:
+        z_t = sum_{tau=1..L} B_tau z_{t-tau} + eps_t
+
+    Nonlinear:
+        z_t = sum_{tau=1..L} W2_tau tanh(W1_tau z_{t-tau}) + eps_t
+
     x_t = z_t  or  A z_t
 
     Returns:
         z: (T, n)
         x: (T, d)
-        B_list: (L, n, n)
+        B_list: (L, n, n) for linear transition, else None
         A: (d, n) or None
     """
     rng = np.random.default_rng(cfg.seed)
     n, d = cfg.n, cfg.x_dim
 
-    B_list = np.stack(
-        [
-            make_layered_transition(
-                n_layers=cfg.n_layers,
-                n_vars_per_layer=cfg.n_vars_per_layer,
-                density=cfg.B_density,
-                scale=cfg.B_scale,
-                rng=rng
-            )
-            for _ in range(cfg.L)
-        ],
-        axis=0,
-    )
+    B_list = None
+    W1_list = None
+    W2_list = None
 
-    if cfg.stable:
-        B_list, rho = enforce_stability(B_list, target=cfg.stability_target)
-        if not (np.isfinite(rho) and rho < cfg.stability_target):
-            raise RuntimeError("Could not stabilize B_list.")
+    if cfg.transition_type == "linear":
+        B_list = np.stack(
+            [
+                make_layered_transition(
+                    n_layers=cfg.n_layers,
+                    n_vars_per_layer=cfg.n_vars_per_layer,
+                    density=cfg.B_density,
+                    scale=cfg.B_scale,
+                    rng=rng
+                )
+                for _ in range(cfg.L)
+            ],
+            axis=0,
+        )
+
+        if cfg.stable:
+            B_list, rho = enforce_stability(B_list, target=cfg.stability_target)
+            if not (np.isfinite(rho) and rho < cfg.stability_target):
+                raise RuntimeError("Could not stabilize B_list.")
+    else:
+        # minimal-change nonlinear transition: two-layer tanh MLP per lag
+        W1_list = np.stack(
+            [
+                make_layered_transition(
+                    n_layers=cfg.n_layers,
+                    n_vars_per_layer=cfg.n_vars_per_layer,
+                    density=cfg.B_density,
+                    scale=cfg.B_scale,
+                    rng=rng
+                )
+                for _ in range(cfg.L)
+            ],
+            axis=0,
+        )
+        W2_list = np.stack(
+            [
+                make_layered_transition(
+                    n_layers=cfg.n_layers,
+                    n_vars_per_layer=cfg.n_vars_per_layer,
+                    density=cfg.B_density,
+                    scale=cfg.B_scale,
+                    rng=rng
+                )
+                for _ in range(cfg.L)
+            ],
+            axis=0,
+        )
+        # out_lin1_list = [rng.random((2, 2)) for _ in range(n)]
+        # out_lin2_list = [rng.random((1, 2)) for _ in range(n)]
 
     total = cfg.T + cfg.burn_in
     eps = sample_eps_zero_mean(total, n, cfg.eps_dist, cfg.eps_params, rng)
 
     z = np.zeros((total, n), dtype=float)
-    for t in range(min(cfg.L, total)):
+    for t in range(cfg.L):
         z[t] = eps[t]
 
+    lagged_values = []
     for t in range(cfg.L, total):
-        acc = np.zeros(n, dtype=float)
-        for tau in range(1, cfg.L + 1):
-            prev = z[t - tau]
+        agg = np.zeros(n, dtype=float) # aggregated effects from all lags
+        for tau in range(1, cfg.L + 1): # effects from each lag
+            _prev_tau = z[t - tau]
             if cfg.transition_type == "linear":
-                acc += B_list[tau - 1] @ prev
+                agg += B_list[tau - 1] @ _prev_tau
             else:
-                acc += B_list[tau - 1] @ apply_nonlinearity(prev, cfg.transition_nonlinearity)
-        z[t] = acc + eps[t]
+                lagged_values.append(_prev_tau)
+                _hidden = apply_nonlinearity(W1_list[tau - 1] @ _prev_tau, "tanh")
+                agg += W2_list[tau - 1] @ _hidden
+        
+        if cfg.transition_type == 'linear':
+            z[t] = agg + eps[t]
+        else:
+            hist_avg = np.mean(np.stack(lagged_values, axis=0))
+            z[t] = agg + hist_avg * eps[t]
+
+            # for z_idx in range(n):
+            #     _hidden = apply_nonlinearity(out_lin1_list[z_idx] @ np.array([agg[z_idx], eps[t,z_idx]]), "tanh")
+            #     z[t,z_idx] = float(out_lin2_list[z_idx] @ _hidden)
+
+        # avg_lagged = np.mean(np.concatenate(lagged_vals, axis=0))
+        # noise_t = eps[t] * avg_lagged
+        # z[t] = acc + noise_t
 
     z = z[cfg.burn_in:]
 
+    A = None
     if cfg.mixing_type == "linear":
         A = make_mixing_matrix(d, n, rng)
         x = z @ A.T
     elif cfg.mixing_type == "nonlinear":
-        A = apply_nonlinearity(make_mixing_matrix(d, n, rng), kind='tanh')
-        x = z @ A.T
+        lin1 = make_mixing_matrix(d // 2, n, rng)
+        lin2 = make_mixing_matrix(d, d // 2, rng)
+        _x = apply_nonlinearity(z @ lin1.T, kind="leakyrelu")
+        x = _x @ lin2.T
     else:
         raise ValueError(f"Unknown mixing_type: {cfg.mixing_type}")
 
@@ -247,35 +309,74 @@ def generate_multi_trajectory_process(
     num_traj: int = 64,
     T_each: int = 2000,
     reseed_each: bool = True,
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray, Optional[np.ndarray], np.ndarray]:
+) -> Tuple[np.ndarray, np.ndarray, Optional[np.ndarray], Optional[np.ndarray], np.ndarray]:
     """
-    Shared B_list and A across trajectories, independent noise per trajectory.
+    Shared transition and A across trajectories, independent noise per trajectory.
+    For nonlinear transition, B_list is None.
     """
     rng_shared = np.random.default_rng(cfg.seed)
     n, d = cfg.n, cfg.x_dim
 
-    B_list = np.stack(
-        [
-            make_layered_transition(
-                n_layers=cfg.n_layers,
-                n_vars_per_layer=cfg.n_vars_per_layer,
-                density=cfg.B_density,
-                scale=cfg.B_scale,
-                rng=rng_shared
-            )
-            for _ in range(cfg.L)
-        ],
-        axis=0,
-    )
+    B_list = None
+    W1_list = None
+    W2_list = None
 
-    if cfg.stable:
-        B_list, rho = enforce_stability(B_list, target=cfg.stability_target)
-        if not (np.isfinite(rho) and rho < cfg.stability_target):
-            raise RuntimeError("Could not stabilize shared B_list.")
+    if cfg.transition_type == "linear":
+        B_list = np.stack(
+            [
+                make_layered_transition(
+                    n_layers=cfg.n_layers,
+                    n_vars_per_layer=cfg.n_vars_per_layer,
+                    density=cfg.B_density,
+                    scale=cfg.B_scale,
+                    rng=rng_shared
+                )
+                for _ in range(cfg.L)
+            ],
+            axis=0,
+        )
+
+        if cfg.stable:
+            B_list, rho = enforce_stability(B_list, target=cfg.stability_target)
+            if not (np.isfinite(rho) and rho < cfg.stability_target):
+                raise RuntimeError("Could not stabilize shared B_list.")
+    else:
+        W1_list = np.stack(
+            [
+                make_layered_transition(
+                    n_layers=cfg.n_layers,
+                    n_vars_per_layer=cfg.n_vars_per_layer,
+                    density=cfg.B_density,
+                    scale=cfg.B_scale,
+                    rng=rng_shared
+                )
+                for _ in range(cfg.L)
+            ],
+            axis=0,
+        )
+        W2_list = np.stack(
+            [
+                make_layered_transition(
+                    n_layers=cfg.n_layers,
+                    n_vars_per_layer=cfg.n_vars_per_layer,
+                    density=cfg.B_density,
+                    scale=cfg.B_scale,
+                    rng=rng_shared
+                )
+                for _ in range(cfg.L)
+            ],
+            axis=0,
+        )
 
     A = None
+    lin1 = None
+    lin2 = None
     if cfg.mixing_type == "linear":
         A = make_mixing_matrix(d, n, rng_shared)
+    elif cfg.mixing_type == "nonlinear":
+        # Share one nonlinear observation map across all trajectories.
+        lin1 = make_mixing_matrix(d // 2, n, rng_shared)
+        lin2 = make_mixing_matrix(d, d // 2, rng_shared)
 
     z_all = []
     x_all = []
@@ -289,35 +390,51 @@ def generate_multi_trajectory_process(
 
         total = T_each + cfg.burn_in
         eps = sample_eps_zero_mean(total, n, cfg.eps_dist, cfg.eps_params, rng)
-        z = np.zeros((total, d), dtype=float)
+        z = np.zeros((total, n), dtype=float)
 
         for t in range(min(cfg.L, total)):
             z[t] = eps[t]
 
         for t in range(cfg.L, total):
-            acc = np.zeros(n, dtype=float)
+            agg = np.zeros(n, dtype=float)
+
+            if cfg.transition_type == "nonlinear":
+                lagged_values = []
+
             for tau in range(1, cfg.L + 1):
                 prev = z[t - tau]
                 if cfg.transition_type == "linear":
-                    acc += B_list[tau - 1] @ prev
+                    agg += B_list[tau - 1] @ prev
                 else:
-                    acc += B_list[tau - 1] @ apply_nonlinearity(prev, cfg.transition_nonlinearity)
-            z[t] = acc + eps[t]
+                    lagged_values.append(prev)
+                    hidden = apply_nonlinearity(W1_list[tau - 1] @ prev, "tanh")
+                    agg += W2_list[tau - 1] @ hidden
+
+            if cfg.transition_type == "linear":
+                z[t] = agg + eps[t]
+            else:
+                hist_avg = np.mean(np.stack(lagged_values, axis=0))
+                z[t] = agg + hist_avg * eps[t]
 
         z = z[cfg.burn_in:]
 
         if cfg.mixing_type == "identity":
             x = z.copy()
-        else:
+        elif cfg.mixing_type == "linear":
             x = z @ A.T
+        elif cfg.mixing_type == "nonlinear":
+            _x = apply_nonlinearity(z @ lin1.T, kind="leakyrelu")
+            x = _x @ lin2.T
+        else:
+            raise ValueError(f"Unknown mixing_type: {cfg.mixing_type}")
 
         z_all.append(z)
         x_all.append(x)
         traj_ids.append(np.full(T_each, k, dtype=int))
 
     return (
-        np.concatenate(z_all, axis=0),
-        np.concatenate(x_all, axis=0),
+        np.stack(z_all, axis=0),
+        np.stack(x_all, axis=0),
         B_list,
         A,
         np.concatenate(traj_ids, axis=0),
@@ -386,21 +503,33 @@ if __name__ == "__main__":
         print("z shape:", z.shape)
         print("x shape:", x.shape)
 
-    rho = spectral_radius(companion_matrix(B_list))
-    print("companion spectral radius:", rho)
-    print("B_list shape:", B_list.shape)
+    if B_list is not None:
+        rho = spectral_radius(companion_matrix(B_list))
+        print("companion spectral radius:", rho)
+        print("B_list shape:", B_list.shape)
+    else:
+        print("nonlinear transition: no B_list to report/save")
+
     print("A shape:", None if A is None else A.shape)
 
     if args.save is not None:
+        save_path = args.save
+
+        # add prefix for multi-trajectory
+        if args.multi:
+            dirname, filename = os.path.split(save_path)
+            save_path = os.path.join(dirname, f"multi_{filename}")
+
         save_dict = {
             "xt": x,
             "zt": z,
-            "B_list": B_list,
         }
+        if B_list is not None:
+            save_dict["B_list"] = B_list
         if A is not None:
             save_dict["A"] = A
         if traj_id is not None:
             save_dict["traj_id"] = traj_id
 
-        np.savez(args.save, **save_dict)
-        print(f"Saved to: {args.save}")
+        np.savez(save_path, **save_dict)
+        print(f"Saved to: {save_path}")
