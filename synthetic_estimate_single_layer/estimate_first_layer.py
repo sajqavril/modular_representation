@@ -161,7 +161,9 @@ def train():
     save_path = Path(__file__).with_name('saved_models') / 'estimate_first_layer_model.npz'
 
     # JEPA / teacher params
-    ema_m = 0.95          # teacher momentum
+    ema_m = 0.95          # EMA momentum for the teacher.
+                          # New teacher = ema_m * old teacher + (1 - ema_m) * current student.
+                          # So the teacher moves more slowly and gives a stabler target.
     use_jepa_warmup = True
     warmup_epochs = 50    # JEPA-only warmup
 
@@ -192,20 +194,22 @@ def train():
         act='gelu'
     ).to(device)
 
-    # teacher encoder: same architecture, no grad
+    # Teacher encoder: same network as f1, but we never optimize it directly.
+    # It is updated only by EMA from the student encoder f1.
     f1_teacher = copy.deepcopy(f1).to(device)
     for p in f1_teacher.parameters():
         p.requires_grad = False
 
-    # small predictor q on latent space
-    # yes, this is "in latent space"; since out_dim=1, keep it tiny
+    # Small predictor in latent space:
+    # use z_t from the student to predict the teacher's z_{t+1}.
     q_pred = nn.Sequential(
         nn.Linear(1, 2),
         nn.GELU(),
         nn.Linear(2, 1)
     ).to(device)
 
-    # keep g1 if you want, but it is no longer needed for JEPA loss
+    # Optional decoder-like head.
+    # This is not the JEPA loss itself; it just helps keep z_t tied to x_t.
     g1 = EncoderF1(
         in_dim=1,
         out_dim=d,
@@ -246,7 +250,11 @@ def train():
         if (epoch + 1) % 20 == 0:
             print(f'*** Epoch: {epoch+1}/{n_epochs} ***')
 
-        # Update the conditional density estimators using the current encoder.
+        # Step 1: update the q-models while treating the current encoder outputs as fixed.
+        # These q-models estimate two conditional log-densities:
+        # 1) q(z_{t+1} | x_t)
+        # 2) q(z_{t+1} | z_t)
+        # Their difference is used as the CMI-style score.
         q_z1t1_xt0.train()
         q_z1t1_z1t0.train()
 
@@ -256,6 +264,8 @@ def train():
         for q_epoch in range(n_q_epochs):
             optim_q.zero_grad()
 
+            # Detach here so q learns to fit the current representations,
+            # without changing the encoder during the q-update step.
             logp_q_z1t1_xt0 = q_z1t1_xt0(x=est_z1t1.detach(), cond=xt0)
             logp_q_z1t1_z1t0 = q_z1t1_z1t0(x=est_z1t1.detach(), cond=est_z1t0.detach())
             estimator_loss = -logp_q_z1t1_xt0.mean() - logp_q_z1t1_z1t0.mean()
@@ -271,7 +281,8 @@ def train():
             estimator_loss.backward()
             optim_q.step()
 
-        # Then update the encoder, predictor, and decoder-side regularizers.
+        # Step 2: update the student encoder f1, the latent predictor q_pred,
+        # and the optional decoder head g1.
         for f_epoch in range(n_f_epochs):
             optim_f.zero_grad()
             optim_pred.zero_grad()
@@ -279,24 +290,41 @@ def train():
             est_z1t0 = f1(xt0)
             est_z1t1 = f1(xt1)
 
-            # JEPA target from teacher; sg = detach / no-grad
+            # JEPA target:
+            # the teacher encodes x_{t+1}, and we use that as a stable target.
+            # no_grad means the teacher target is fixed during this step.
             with torch.no_grad():
                 tgt_z1t1 = f1_teacher(xt1)
 
+            # Student prediction:
+            # use the student's z_t to predict the teacher's z_{t+1}.
             pred_z1t1 = q_pred(est_z1t0)
 
+            # Reconstruction regularizer:
+            # encourage z_t to still contain information about x_t.
             recon_loss = F.mse_loss(g1(est_z1t0), xt0)
 
+            # JEPA loss:
+            # make the student's prediction of the future latent
+            # match the teacher's future latent target.
             mi_reg = F.mse_loss(pred_z1t1, tgt_z1t1)
 
+            # Re-evaluate the two conditional models without detach now,
+            # so gradients can shape the encoder.
             logp_q_z1t1_xt0 = q_z1t1_xt0(x=est_z1t1, cond=xt0)
             logp_q_z1t1_z1t0 = q_z1t1_z1t0(x=est_z1t1, cond=est_z1t0)
 
+            # CMI-style objective:
+            # larger means x_t explains z_{t+1} better than z_t alone.
             cmi_loss = (logp_q_z1t1_xt0 - logp_q_z1t1_z1t0).mean()
 
+            # Variance regularizer:
+            # stop the representation from collapsing to nearly one value.
             var_reg = F.relu(0.5 - est_z1t0.std()).mean()
 
-            # warmup: JEPA first, then combine
+            # Warmup:
+            # first learn a stable predictive latent with JEPA (+ reconstruction),
+            # then add the CMI term after the predictor has settled a bit.
             if use_jepa_warmup and epoch < warmup_epochs:
                 loss_f = lambda_jepa * mi_reg + lambda_recon * recon_loss # make it better to anchor the x subspace
                 if epoch == warmup_epochs - 1:
@@ -305,6 +333,7 @@ def train():
                         pred_tol = 1.0 * pred0
     
             else:
+                # After warmup, only penalize JEPA error above the warmup tolerance.
                 mi_reg = F.relu(mi_reg - pred_tol)
                 loss_f = cmi_loss * lambda_cmi + lambda_jepa * mi_reg + 0.1 * var_reg
 
@@ -330,7 +359,9 @@ def train():
             optim_f.step()
             optim_pred.step()
 
-            # EMA teacher update
+            # EMA teacher update:
+            # copy the student slowly into the teacher instead of replacing it.
+            # This makes teacher targets smoother and less noisy than using f1 directly.
             with torch.no_grad():
                 for p_t, p_s in zip(f1_teacher.parameters(), f1.parameters()):
                     p_t.data.mul_(ema_m).add_(p_s.data, alpha=1.0 - ema_m)
