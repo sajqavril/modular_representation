@@ -9,7 +9,8 @@ from pathlib import Path
 
 # load data
 
-raw_data = np.load('/home/jiaqisun/models/proj_cltd/continue_learning_for_temporal_data/synthetic_estimate_single_layer/data/data_generated/multi_lg_2layer_sigma1.npz')
+DATA_PATH = Path(__file__).resolve().parents[1] / "data" / "data_generated" / "multi_lg_2layer_sigma1.npz"
+raw_data = np.load(DATA_PATH)
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 

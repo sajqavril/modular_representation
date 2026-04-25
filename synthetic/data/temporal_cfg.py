@@ -1,5 +1,9 @@
 import numpy as np
-from temporal_generator import TemporalProcessConfig
+
+try:
+    from synthetic.data.temporal_generator import TemporalProcessConfig
+except ModuleNotFoundError:
+    from temporal_generator import TemporalProcessConfig
 
 LINEAR_GAUSSIAN = TemporalProcessConfig(
     n_layers=2,

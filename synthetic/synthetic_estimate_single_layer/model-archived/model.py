@@ -23,7 +23,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from synthetic_estimate_single_layer.data.data_utils import stable_softplus, batch_standardize, lowpass_fft_coarsen
+from synthetic.data.data_utils import stable_softplus, batch_standardize, lowpass_fft_coarsen
 
 def gaussian_nll_diag(y: torch.Tensor, mu: torch.Tensor, log_sigma: torch.Tensor) -> torch.Tensor:
         """

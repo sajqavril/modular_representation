@@ -474,7 +474,10 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    from temporal_cfg import PRESET_CONFIGS
+    try:
+        from synthetic.data.temporal_cfg import PRESET_CONFIGS
+    except ModuleNotFoundError:
+        from temporal_cfg import PRESET_CONFIGS
 
     if args.preset not in PRESET_CONFIGS:
         raise ValueError(

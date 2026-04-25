@@ -23,3 +23,6 @@ synthetic_archived/
 
 # vscode
 .vscode/
+.codex
+
+CMI_estimator/
