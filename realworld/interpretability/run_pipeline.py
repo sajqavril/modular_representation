@@ -1,7 +1,7 @@
 """
 Hierarchical SAE Pipeline
 =========================
-Stage 1 : Extract LLM activations (Pythia-1.4B @ layer 16, Llama-3-8B @ layer 20)
+Stage 1 : Extract LLM activations (Pythia-6.9B @ layer 18, Gemma-2-9B @ layer 25)
 Stage 2 : PCA compression (fit on AMPS, apply to all datasets)
 Stage 3 : Train linear hierarchical VAR model across model orders {10,50,100}
 
@@ -52,10 +52,10 @@ class Config:
     output_dir: str = "./hierarchical_sae_outputs"
 
     models: List[dict] = field(default_factory=lambda: [
-        {"name": "EleutherAI/pythia-1.4b",
-         "layer": 16, "d_model": 2048, "tag": "pythia1b4"},
-        {"name": "meta-llama/Meta-Llama-3-8B",
-         "layer": 20, "d_model": 4096, "tag": "llama3_8b"},
+        {"name": "EleutherAI/pythia-6.9b",
+        "layer": 18, "d_model": 4096, "tag": "pythia6b9"},
+        {"name": "google/gemma-2-9b",
+        "layer": 25, "d_model": 3584, "tag": "gemma2_9b"},
     ])
 
     datasets: List[dict] = field(default_factory=lambda: [
@@ -271,11 +271,11 @@ def load_texts(ds_cfg: dict):
 
 def get_transformer_blocks(model):
     if hasattr(model, "gpt_neox"):           return model.gpt_neox.layers
-    if hasattr(model, "layers"):             return model.layers
     if hasattr(model, "model") and hasattr(model.model, "layers"):
-                                             return model.model.layers
+        return model.model.layers            # Gemma-2, Llama, Mistral
+    if hasattr(model, "layers"):             return model.layers
     if hasattr(model, "transformer") and hasattr(model.transformer, "h"):
-                                             return model.transformer.h
+        return model.transformer.h
     raise ValueError(f"Cannot find transformer blocks for {type(model)}")
 
 
