@@ -52,11 +52,11 @@ class Config:
     output_dir: str = "./hierarchical_sae_outputs"
 
     models: List[dict] = field(default_factory=lambda: [
-        {"name": "EleutherAI/pythia-6.9b",
-        "layer": 18, "d_model": 4096, "tag": "pythia6b9"},
+        {"name": "EleutherAI/pythia-1.4b",
+        "layer": 16, "d_model": 2048, "tag": "pythia1b4"},
         {"name": "google/gemma-2-9b",
         "layer": 25, "d_model": 3584, "tag": "gemma2_9b"},
-    ])
+        ])
 
     datasets: List[dict] = field(default_factory=lambda: [
         {
