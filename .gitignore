@@ -25,4 +25,8 @@ synthetic_archived/
 .vscode/
 .codex
 
+# duplicated
+synthetic_adaptation/
+synthetic_identifiability/
+
 CMI_estimator/

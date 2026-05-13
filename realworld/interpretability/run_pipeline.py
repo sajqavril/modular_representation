@@ -54,8 +54,8 @@ class Config:
     models: List[dict] = field(default_factory=lambda: [
         {"name": "EleutherAI/pythia-1.4b",
         "layer": 16, "d_model": 2048, "tag": "pythia1b4"},
-        {"name": "google/gemma-2-9b",
-        "layer": 25, "d_model": 3584, "tag": "gemma2_9b"},
+        # {"name": "google/gemma-2-9b",
+        # "layer": 25, "d_model": 3584, "tag": "gemma2_9b"},
         ])
 
     datasets: List[dict] = field(default_factory=lambda: [
@@ -188,8 +188,8 @@ def act_path(out, mtag, dtag):
 def bnd_path(out, mtag, dtag):
     return Path(out) / "activations" / f"{mtag}__{dtag}.boundaries.npy"
 
-def pca_save_path(out, mtag):
-    return Path(out) / "pca" / f"{mtag}__pca.npz"
+def pca_save_path(out, mtag, dtag):
+    return Path(out) / "pca" / f"{mtag}__{dtag}__pca.npz"
 
 def ckpt_dir(out, mtag, dtag, model_order, lambda_sp):
     lsp_str = f"{lambda_sp:.0e}".replace("e-0", "e-")
@@ -423,9 +423,10 @@ def run_extraction(cfg: Config, device: torch.device):
 # STAGE 2 — PCA  (fit on AMPS, reuse for all datasets)
 # ════════════════════════════════════════════════════════════════════════════
 
-def fit_or_load_pca(cfg: Config, model_tag: str) -> IncrementalPCA:
+def fit_or_load_pca(cfg: Config, model_tag: str,
+                    ds_tag: str) -> IncrementalPCA:
     out = Path(cfg.output_dir)
-    p   = pca_save_path(out, model_tag)
+    p   = pca_save_path(out, model_tag, ds_tag)
     ensure_dir(p.parent)
 
     if p.exists():
@@ -438,12 +439,13 @@ def fit_or_load_pca(cfg: Config, model_tag: str) -> IncrementalPCA:
         pca.explained_variance_ratio_ = data["explained_variance_ratio"]
         return pca
 
-    ap = act_path(out, model_tag, "amps")
+    # fit on this dataset's own activations
+    ap = act_path(out, model_tag, ds_tag)
     if not ap.exists():
-        raise FileNotFoundError(f"AMPS activations missing: {ap}")
+        raise FileNotFoundError(f"Activations missing for PCA: {ap}")
 
-    print(f"\n── PCA fit: {model_tag} on AMPS ──")
-    timer = Timer(timing_log_path(out), model_tag, "amps")
+    print(f"\n── PCA fit: {model_tag} on {ds_tag} ──")
+    timer = Timer(timing_log_path(out), model_tag, ds_tag)
     timer.start("pca_fit")
 
     acts = np.load(ap, mmap_mode="r")
@@ -725,11 +727,8 @@ def run_task(model_cfg, ds_cfg, model_order, lambda_sp, cfg, device):
     timer      = Timer(timing_log_path(out), mtag, dtag, model_order)
     cd         = ckpt_dir(out, mtag, dtag, model_order, lambda_sp)
 
-    if (cd / f"epoch{cfg.n_epochs:03d}.pt").exists():
-        print(f"[SKIP] Complete: {cd.name}"); return
-
     timer.start("pca_load_or_fit")
-    pca = fit_or_load_pca(cfg, mtag)
+    pca = fit_or_load_pca(cfg, mtag, dtag)   # ← pass dtag
     timer.stop()
 
     ap = act_path(out, mtag, dtag)
