@@ -61,7 +61,7 @@ class Config:
     datasets: List[dict] = field(default_factory=lambda: [
         {
             "tag": "arxiv",
-            "local_path": "/data/user_data/jiaqisun/arxiv_metadata.json",
+            "local_path": "your_path_to_arxiv_metadata.json",
             "text_field": ["title", "abstract"],
             "min_chars": 100,
             "n_passages": 50_000,   # ~20 GB Pythia, ~40 GB Llama

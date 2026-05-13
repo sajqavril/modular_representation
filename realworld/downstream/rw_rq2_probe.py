@@ -518,7 +518,7 @@ def parse_args():
     p.add_argument("--models", nargs="+", default=["pythia1b4", "gemma2_9b"])
     p.add_argument("--datasets", nargs="+", default=["amps", "arxiv", "wikipedia"])
     p.add_argument("--arxiv_local_path",
-                   default="/data/user_data/jiaqisun/arxiv_metadata.json",
+                   default="your_path_to_arxiv_metadata.json",
                    help="Path to local arXiv JSONL file (same as pipeline config)")
     p.add_argument("--model_order", type=int, default=10)
     p.add_argument("--lambda_sp", type=float, default=1e-4)

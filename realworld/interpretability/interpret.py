@@ -36,7 +36,7 @@ warnings.filterwarnings("ignore")
 # CONFIG — edit these paths to match your cluster
 # ════════════════════════════════════════════════════════════════════════════
 
-OUTPUT_DIR   = Path("/data/user_data/jiaqisun/cltd_realworld/interpretability/hier_sae_outputs")
+OUTPUT_DIR   = Path("your_path_to_hier_sae_outputs")
 INTERP_DIR   = OUTPUT_DIR / "interpretation"
 MODEL_TAG    = "pythia1b4"
 EPOCH        = 30
