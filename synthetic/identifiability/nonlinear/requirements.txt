@@ -1,0 +1,10 @@
+torch>=2.0
+pytorch-lightning>=1.5
+numpy
+PyYAML
+wandb
+matplotlib
+scipy
+Pillow
+scikit-learn
+tqdm
