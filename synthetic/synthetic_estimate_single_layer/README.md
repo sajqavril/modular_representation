@@ -1,57 +1,101 @@
-# Modular Representation for Continual Learning
+# Modular Representation Synthetic Experiments
 
-## Scope
+This directory contains the synthetic experiment code used for the current MoRe first-layer representation-learning studies.
 
-This repository folder contains the synthetic experiment code used for the current MoRe representation-learning experiments.
+The code supports:
 
-The main synthetic code path is:
+1. generating synthetic hierarchical temporal datasets
+2. training the first-layer estimator on those datasets
+3. saving checkpoints, metrics, reports, and plots
+4. reproducing the four synthetic figures used in the paper appendix
 
-- dataset generation from configurable hierarchical temporal processes
-- training the first-layer estimator on those datasets
-- saving checkpoints, metrics, and plots for the synthetic runs
+## Repository Layout
 
-The current work does **not** package the variance-sweep study as part of the main reproducibility path.
+Main experiment code:
 
-## Main Synthetic Experiment Code
+- `synthetic_estimate_single_layer/first_layer_stability.py`
+- `synthetic_estimate_single_layer/run_first_layer_stability.py`
 
-The main runner for the general synthetic experiments is:
+Synthetic data generation:
 
-- [synthetic_estimate_single_layer/run_first_layer_stability.py](../synthetic_estimate_single_layer/run_first_layer_stability.py)
+- `../data/temporal_generator.py`
+- `../data/temporal_cfg.py`
+- `../data/run_generator_multiple.sh`
 
-This depends on:
+Paper-figure reproduction:
 
-- [synthetic_estimate_single_layer/first_layer_stability.py](../synthetic_estimate_single_layer/first_layer_stability.py)
-- [synthetic_estimate_single_layer/data/temporal_generator.py](../synthetic_estimate_single_layer/data/temporal_generator.py)
-- [synthetic_estimate_single_layer/data/temporal_cfg.py](../synthetic_estimate_single_layer/data/temporal_cfg.py)
-- [synthetic_estimate_single_layer/data/run_generator_multiple.sh](../synthetic_estimate_single_layer/data/run_generator_multiple.sh)
+- `synthetic_estimate_single_layer/run_paper_synthetic_figures.py`
+- `synthetic_estimate_single_layer/make_paper_synthetic_figures.py`
+- `synthetic_estimate_single_layer/PAPER_FIGURE_REPRODUCIBILITY.md`
 
-These files are sufficient to:
+Optional notebook:
 
-1. generate the synthetic datasets
-2. run the synthetic training experiments
-3. save the resulting plots, metrics, and checkpoints
+- `synthetic_estimate_single_layer/estimate_first_layer.ipynb`
 
-## Minimal Upload Set for General Synthetic Experiments
+## Environment Setup
 
-If you want to upload the general synthetic experiment code, upload at least:
+Example setup with conda:
 
-- [synthetic_estimate_single_layer/first_layer_stability.py](../synthetic_estimate_single_layer/first_layer_stability.py)
-- [synthetic_estimate_single_layer/run_first_layer_stability.py](../synthetic_estimate_single_layer/run_first_layer_stability.py)
-- [synthetic_estimate_single_layer/data/temporal_generator.py](../synthetic_estimate_single_layer/data/temporal_generator.py)
-- [synthetic_estimate_single_layer/data/temporal_cfg.py](../synthetic_estimate_single_layer/data/temporal_cfg.py)
-- [synthetic_estimate_single_layer/data/run_generator_multiple.sh](../synthetic_estimate_single_layer/data/run_generator_multiple.sh)
+```bash
+conda create -n more_synth python=3.11 -y
+conda activate more_synth
+pip install numpy pandas matplotlib nbformat jupyter
+pip install torch --index-url https://download.pytorch.org/whl/cpu
+```
 
-Recommended to include as well:
+Notes:
 
-- [synthetic_estimate_single_layer/estimate_first_layer.ipynb](../synthetic_estimate_single_layer/estimate_first_layer.ipynb)
-- [synthetic_estimate_single_layer/estimate_first_layer.py](../synthetic_estimate_single_layer/estimate_first_layer.py)
+- A CUDA-enabled PyTorch installation is recommended for the full training runs.
+- The CPU build is sufficient for correctness but can be slow.
 
-## Paper Figure Reproduction
+## How to Reproduce the Main Synthetic Experiments
 
-The four synthetic normal-training figures used in the paper appendix have a dedicated reproduction path:
+From this directory:
 
-- [synthetic_estimate_single_layer/run_paper_synthetic_figures.py](../synthetic_estimate_single_layer/run_paper_synthetic_figures.py)
-- [synthetic_estimate_single_layer/make_paper_synthetic_figures.py](../synthetic_estimate_single_layer/make_paper_synthetic_figures.py)
-- [synthetic_estimate_single_layer/PAPER_FIGURE_REPRODUCIBILITY.md](../synthetic_estimate_single_layer/PAPER_FIGURE_REPRODUCIBILITY.md)
+```bash
+cd synthetic_estimate_single_layer
+python run_first_layer_stability.py
+```
 
-That path is only for reproducing the four appendix figures and is separate from the general synthetic experiment runner above.
+This script will:
+
+1. generate the required synthetic datasets from the presets in `data/temporal_cfg.py`
+2. train the synthetic experiments
+3. save metrics tables, plots, checkpoints, and a report notebook
+
+The outputs are written to a timestamped folder under:
+
+```text
+synthetic_estimate_single_layer/experiments/first_layer_stability_<timestamp>/
+```
+
+Useful command variants:
+
+Force regeneration of datasets:
+
+```bash
+python run_first_layer_stability.py --force-generate
+```
+
+Full run with explicit output directory:
+
+```bash
+python run_first_layer_stability.py \
+  --experiment-root experiments/first_layer_stability_full \
+  --n-epochs 1000 \
+  --n-q-epochs 20 \
+  --n-f-epochs 3 \
+  --warmup-epochs 50
+```
+
+
+## Generated Outputs
+
+For each run, the experiment directory contains artifacts such as:
+
+- generated datasets copied into `datasets/`
+- per-run metrics CSV files
+- scatter plots and training curves
+- model checkpoints
+- summary tables
+- a rendered HTML and notebook report
