@@ -1,0 +1,35 @@
+{
+  "out_dir": "results/baselines",
+  "T": 50000,
+  "obs_dim": 8,
+  "noise_scale": 0.1,
+  "seeds": [
+    1
+  ],
+  "device": "cuda",
+  "verbose_every": 0,
+  "old_epochs": 3000,
+  "epochs": 5000,
+  "lr": 0.005,
+  "tau_start": 2.0,
+  "tau_end": 0.3,
+  "warmup_frac": 0.3,
+  "w_data": 1.0,
+  "w_align": 0.01,
+  "w_sp_old": 0.01,
+  "w_sp_new": 0.05,
+  "w_B_sp": 0.01,
+  "w_gate_binary": 0.005,
+  "analytic_gate_C": 3.0,
+  "analytic_noise_floor": 0.01,
+  "gate_lr_factor": 0.1,
+  "cases": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ]
+}

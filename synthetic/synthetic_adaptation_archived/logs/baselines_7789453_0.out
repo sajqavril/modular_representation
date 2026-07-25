@@ -1,0 +1,98 @@
+
+============================================================
+seed=0
+============================================================
+
+[seed=0] Case 0: case1_z1z2_same
+  [case1_z1z2_same] a_old=[0.5006999969482422, 0.7750999927520752]
+
+  [case1_z1z2_same] method=reuse_all
+
+  [case1_z1z2_same] method=MoRe_no_analytic
+
+  [case1_z1z2_same] method=MoRe_no_T
+  a_old=[0.5006999969482422, 0.7750999927520752] -> old_logits=[-0.8029999732971191, 0.8029999732971191] new_logit=0.000
+
+  [case1_z1z2_same] method=MoRe_full
+  a_old=[0.5006999969482422, 0.7750999927520752] -> old_logits=[-0.8029999732971191, 0.8029999732971191] new_logit=0.000
+
+[seed=0] Case 1: case2_z1z2z3z4
+  [case2_z1z2z3z4] a_old=[0.5769000053405762, 0.734499990940094]
+
+  [case2_z1z2z3z4] method=reuse_all
+
+  [case2_z1z2z3z4] method=MoRe_no_analytic
+
+  [case2_z1z2z3z4] method=MoRe_no_T
+  a_old=[0.5769000053405762, 0.734499990940094] -> old_logits=[-0.4690000116825104, 0.4690000116825104] new_logit=0.000
+
+  [case2_z1z2z3z4] method=MoRe_full
+  a_old=[0.5769000053405762, 0.734499990940094] -> old_logits=[-0.4690000116825104, 0.4690000116825104] new_logit=0.000
+
+[seed=0] Case 2: case3_z3z4
+  [case3_z3z4] a_old=[0.45509999990463257, 0.3921000063419342]
+
+  [case3_z3z4] method=reuse_all
+
+  [case3_z3z4] method=MoRe_no_analytic
+
+  [case3_z3z4] method=MoRe_no_T
+  a_old=[0.45509999990463257, 0.3921000063419342] -> old_logits=[0.1889999955892563, -0.1889999955892563] new_logit=0.000
+
+  [case3_z3z4] method=MoRe_full
+  a_old=[0.45509999990463257, 0.3921000063419342] -> old_logits=[0.1889999955892563, -0.1889999955892563] new_logit=0.000
+
+[seed=0] Case 3: case4_z1z3z4
+  [case4_z1z3z4] a_old=[0.6237999796867371, 0.46320000290870667]
+
+  [case4_z1z3z4] method=reuse_all
+
+  [case4_z1z3z4] method=MoRe_no_analytic
+
+  [case4_z1z3z4] method=MoRe_no_T
+  a_old=[0.6237999796867371, 0.46320000290870667] -> old_logits=[0.4779999852180481, -0.4779999852180481] new_logit=0.000
+
+  [case4_z1z3z4] method=MoRe_full
+  a_old=[0.6237999796867371, 0.46320000290870667] -> old_logits=[0.4779999852180481, -0.4779999852180481] new_logit=0.000
+
+[seed=0] Case 4: case5_z2z3z4
+  [case5_z2z3z4] a_old=[0.7271999716758728, 0.59579998254776]
+
+  [case5_z2z3z4] method=reuse_all
+
+  [case5_z2z3z4] method=MoRe_no_analytic
+
+  [case5_z2z3z4] method=MoRe_no_T
+  a_old=[0.7271999716758728, 0.59579998254776] -> old_logits=[0.3919999897480011, -0.3919999897480011] new_logit=0.000
+
+  [case5_z2z3z4] method=MoRe_full
+  a_old=[0.7271999716758728, 0.59579998254776] -> old_logits=[0.3919999897480011, -0.3919999897480011] new_logit=0.000
+
+[seed=0] Case 5: case6_z1_only
+  [case6_z1_only] a_old=[0.4871000051498413, 0.3034000098705292]
+
+  [case6_z1_only] method=reuse_all
+
+  [case6_z1_only] method=MoRe_no_analytic
+
+  [case6_z1_only] method=MoRe_no_T
+  a_old=[0.4871000051498413, 0.3034000098705292] -> old_logits=[0.5450000166893005, -0.5450000166893005] new_logit=0.000
+
+  [case6_z1_only] method=MoRe_full
+  a_old=[0.4871000051498413, 0.3034000098705292] -> old_logits=[0.5450000166893005, -0.5450000166893005] new_logit=0.000
+
+[seed=0] Case 6: case7_z2_only
+  [case7_z2_only] a_old=[0.4262000024318695, 0.5329999923706055]
+
+  [case7_z2_only] method=reuse_all
+
+  [case7_z2_only] method=MoRe_no_analytic
+
+  [case7_z2_only] method=MoRe_no_T
+  a_old=[0.4262000024318695, 0.5329999923706055] -> old_logits=[-0.3190000057220459, 0.3190000057220459] new_logit=0.000
+
+  [case7_z2_only] method=MoRe_full
+  a_old=[0.4262000024318695, 0.5329999923706055] -> old_logits=[-0.3190000057220459, 0.3190000057220459] new_logit=0.000
+
+Done. Results: /home/jiaqisun/models/proj_cltd/continue_learning_for_temporal_data/synthetic/synthetic_adaptation/final_adaptation/results/baselines
+Done seed=0

@@ -1,0 +1,898 @@
+{
+  "case1_z1z2_same": {
+    "MoRe_full": {
+      "target_mcc": {
+        "mean": 0.48903611302375793,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.48903611302375793,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.41782790422439575,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": 0.5,
+        "std": 0.0
+      }
+    },
+    "MoRe_no_T": {
+      "target_mcc": {
+        "mean": 0.9068640172481537,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.9068640172481537,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": 1.0,
+        "std": 0.0
+      }
+    },
+    "MoRe_no_analytic": {
+      "target_mcc": {
+        "mean": 0.9038842618465424,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.9038842618465424,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.002979755401611328,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": 1.0,
+        "std": 0.0
+      }
+    },
+    "expansion_only": {
+      "target_mcc": {
+        "mean": 0.9068640172481537,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.9068640172481537,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": null,
+        "std": null
+      }
+    },
+    "finetune": {
+      "target_mcc": {
+        "mean": 0.9989289343357086,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.9989289343357086,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": -0.09206491708755493,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": null,
+        "std": null
+      }
+    },
+    "reuse_all": {
+      "target_mcc": {
+        "mean": 0.9048618972301483,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.9048618972301483,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.002002120018005371,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": 1.0,
+        "std": 0.0
+      }
+    },
+    "scratch": {
+      "target_mcc": {
+        "mean": 0.9236038327217102,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": null,
+        "std": null
+      },
+      "forgetting": {
+        "mean": null,
+        "std": null
+      },
+      "gate_acc": {
+        "mean": null,
+        "std": null
+      }
+    }
+  },
+  "case2_z1z2z3z4": {
+    "MoRe_full": {
+      "target_mcc": {
+        "mean": 0.38682931661605835,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.9436011910438538,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": -0.026678353548049927,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": 1.0,
+        "std": 0.0
+      }
+    },
+    "MoRe_no_T": {
+      "target_mcc": {
+        "mean": 0.38637784123420715,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.9169228374958038,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": 1.0,
+        "std": 0.0
+      }
+    },
+    "MoRe_no_analytic": {
+      "target_mcc": {
+        "mean": 0.36877432465553284,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.8181671798229218,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.09875565767288208,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": 1.0,
+        "std": 0.0
+      }
+    },
+    "expansion_only": {
+      "target_mcc": {
+        "mean": 0.38637784123420715,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.9169228374958038,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": null,
+        "std": null
+      }
+    },
+    "finetune": {
+      "target_mcc": {
+        "mean": 0.7825382649898529,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.978165477514267,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": -0.061242640018463135,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": null,
+        "std": null
+      }
+    },
+    "reuse_all": {
+      "target_mcc": {
+        "mean": 0.41007891297340393,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.9810686707496643,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": -0.06414583325386047,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": 1.0,
+        "std": 0.0
+      }
+    },
+    "scratch": {
+      "target_mcc": {
+        "mean": 0.857432633638382,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": null,
+        "std": null
+      },
+      "forgetting": {
+        "mean": null,
+        "std": null
+      },
+      "gate_acc": {
+        "mean": null,
+        "std": null
+      }
+    }
+  },
+  "case3_z3z4": {
+    "MoRe_full": {
+      "target_mcc": {
+        "mean": 0.9151032567024231,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.939123809337616,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": -0.07550573348999023,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": 0.0,
+        "std": 0.0
+      }
+    },
+    "MoRe_no_T": {
+      "target_mcc": {
+        "mean": 0.9017908573150635,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.8636180758476257,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": 0.0,
+        "std": 0.0
+      }
+    },
+    "MoRe_no_analytic": {
+      "target_mcc": {
+        "mean": 0.8180098533630371,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.8858758509159088,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": -0.02225777506828308,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": 0.0,
+        "std": 0.0
+      }
+    },
+    "expansion_only": {
+      "target_mcc": {
+        "mean": 0.9017908573150635,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.8636180758476257,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": null,
+        "std": null
+      }
+    },
+    "finetune": {
+      "target_mcc": {
+        "mean": 0.9727273881435394,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.8528031408786774,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.010814934968948364,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": null,
+        "std": null
+      }
+    },
+    "reuse_all": {
+      "target_mcc": {
+        "mean": 0.806323230266571,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.8481813371181488,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.015436738729476929,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": 0.0,
+        "std": 0.0
+      }
+    },
+    "scratch": {
+      "target_mcc": {
+        "mean": 0.854186624288559,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": null,
+        "std": null
+      },
+      "forgetting": {
+        "mean": null,
+        "std": null
+      },
+      "gate_acc": {
+        "mean": null,
+        "std": null
+      }
+    }
+  },
+  "case4_z1z3z4": {
+    "MoRe_full": {
+      "target_mcc": {
+        "mean": 0.5742829839388529,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.6921135038137436,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.2603391855955124,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": 0.5,
+        "std": 0.0
+      }
+    },
+    "MoRe_no_T": {
+      "target_mcc": {
+        "mean": 0.27706966797510785,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.4991109371185303,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.4533417522907257,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": 1.0,
+        "std": 0.0
+      }
+    },
+    "MoRe_no_analytic": {
+      "target_mcc": {
+        "mean": 0.5793448885281881,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.7126288712024689,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.2398238182067871,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": 0.5,
+        "std": 0.0
+      }
+    },
+    "expansion_only": {
+      "target_mcc": {
+        "mean": 0.5545745094617208,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.952452689409256,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": null,
+        "std": null
+      }
+    },
+    "finetune": {
+      "target_mcc": {
+        "mean": 0.7052697837352753,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.763041228055954,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.189411461353302,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": null,
+        "std": null
+      }
+    },
+    "reuse_all": {
+      "target_mcc": {
+        "mean": 0.5124505559603373,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.6855207681655884,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.2669319212436676,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": 0.5,
+        "std": 0.0
+      }
+    },
+    "scratch": {
+      "target_mcc": {
+        "mean": 0.8503673871358236,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": null,
+        "std": null
+      },
+      "forgetting": {
+        "mean": null,
+        "std": null
+      },
+      "gate_acc": {
+        "mean": null,
+        "std": null
+      }
+    }
+  },
+  "case5_z2z3z4": {
+    "MoRe_full": {
+      "target_mcc": {
+        "mean": 0.25555076201756793,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.49095651507377625,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.3360249698162079,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": 0.0,
+        "std": 0.0
+      }
+    },
+    "MoRe_no_T": {
+      "target_mcc": {
+        "mean": 0.26634617646535236,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.40851643681526184,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.4184650480747223,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": 0.0,
+        "std": 0.0
+      }
+    },
+    "MoRe_no_analytic": {
+      "target_mcc": {
+        "mean": 0.458015779654185,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.7931759059429169,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.03380557894706726,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": 0.5,
+        "std": 0.0
+      }
+    },
+    "expansion_only": {
+      "target_mcc": {
+        "mean": 0.5508475104967753,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.8269814848899841,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": null,
+        "std": null
+      }
+    },
+    "finetune": {
+      "target_mcc": {
+        "mean": 0.9051055014133453,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.9579180181026459,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": -0.13093653321266174,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": null,
+        "std": null
+      }
+    },
+    "reuse_all": {
+      "target_mcc": {
+        "mean": 0.46434491872787476,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.7788179516792297,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.048163533210754395,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": 0.5,
+        "std": 0.0
+      }
+    },
+    "scratch": {
+      "target_mcc": {
+        "mean": 0.8503139813741049,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": null,
+        "std": null
+      },
+      "forgetting": {
+        "mean": null,
+        "std": null
+      },
+      "gate_acc": {
+        "mean": null,
+        "std": null
+      }
+    }
+  },
+  "case6_z1_only": {
+    "MoRe_full": {
+      "target_mcc": {
+        "mean": 0.9999693036079407,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.9975837469100952,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": -0.05101814866065979,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": 0.5,
+        "std": 0.0
+      }
+    },
+    "MoRe_no_T": {
+      "target_mcc": {
+        "mean": 0.9999693632125854,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.9465655982494354,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": 0.5,
+        "std": 0.0
+      }
+    },
+    "MoRe_no_analytic": {
+      "target_mcc": {
+        "mean": 0.9999693632125854,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.884336918592453,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.06222867965698242,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": 0.5,
+        "std": 0.0
+      }
+    },
+    "expansion_only": {
+      "target_mcc": {
+        "mean": 0.9999693632125854,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.9465655982494354,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": null,
+        "std": null
+      }
+    },
+    "finetune": {
+      "target_mcc": {
+        "mean": 0.999969482421875,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.848331868648529,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.09823372960090637,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": null,
+        "std": null
+      }
+    },
+    "reuse_all": {
+      "target_mcc": {
+        "mean": 0.9999698996543884,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.8544924259185791,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.09207317233085632,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": 0.5,
+        "std": 0.0
+      }
+    },
+    "scratch": {
+      "target_mcc": {
+        "mean": 0.9999693632125854,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": null,
+        "std": null
+      },
+      "forgetting": {
+        "mean": null,
+        "std": null
+      },
+      "gate_acc": {
+        "mean": null,
+        "std": null
+      }
+    }
+  },
+  "case7_z2_only": {
+    "MoRe_full": {
+      "target_mcc": {
+        "mean": 0.9999774098396301,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.9861868619918823,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": -0.06193554401397705,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": 0.5,
+        "std": 0.0
+      }
+    },
+    "MoRe_no_T": {
+      "target_mcc": {
+        "mean": 0.9999775290489197,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.9242513179779053,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": 0.5,
+        "std": 0.0
+      }
+    },
+    "MoRe_no_analytic": {
+      "target_mcc": {
+        "mean": 0.9999778270721436,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.8260100781917572,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.09824123978614807,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": 0.5,
+        "std": 0.0
+      }
+    },
+    "expansion_only": {
+      "target_mcc": {
+        "mean": 0.9999775290489197,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.9242513179779053,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.0,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": null,
+        "std": null
+      }
+    },
+    "finetune": {
+      "target_mcc": {
+        "mean": 0.9999774098396301,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.9718530774116516,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": -0.04760175943374634,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": null,
+        "std": null
+      }
+    },
+    "reuse_all": {
+      "target_mcc": {
+        "mean": 0.9999778866767883,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": 0.8502088785171509,
+        "std": 0.0
+      },
+      "forgetting": {
+        "mean": 0.0740424394607544,
+        "std": 0.0
+      },
+      "gate_acc": {
+        "mean": 0.5,
+        "std": 0.0
+      }
+    },
+    "scratch": {
+      "target_mcc": {
+        "mean": 0.9999775290489197,
+        "std": 0.0
+      },
+      "old_after_mcc": {
+        "mean": null,
+        "std": null
+      },
+      "forgetting": {
+        "mean": null,
+        "std": null
+      },
+      "gate_acc": {
+        "mean": null,
+        "std": null
+      }
+    }
+  }
+}
