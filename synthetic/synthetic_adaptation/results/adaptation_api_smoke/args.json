@@ -1,0 +1,23 @@
+{
+  "out_dir": "synthetic/synthetic_adaptation/results/adaptation_api_smoke",
+  "cases": [
+    3
+  ],
+  "data_seeds": [
+    0
+  ],
+  "train_seeds": [
+    0
+  ],
+  "T": 600,
+  "obs_dim": 8,
+  "noise_scale": 0.1,
+  "old_epochs": 100,
+  "target_id_epochs": 100,
+  "epochs": 100,
+  "lr": 0.005,
+  "w_B_sp": 0.01,
+  "rank_rtol": 0.001,
+  "threshold": null,
+  "device": "cpu"
+}

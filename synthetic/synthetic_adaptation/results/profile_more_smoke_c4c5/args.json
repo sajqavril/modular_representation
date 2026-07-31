@@ -1,0 +1,24 @@
+{
+  "out_dir": "synthetic/synthetic_adaptation/results/profile_more_smoke_c4c5",
+  "cases": [
+    3,
+    4
+  ],
+  "data_seeds": [
+    0
+  ],
+  "train_seeds": [
+    0
+  ],
+  "T": 1000,
+  "obs_dim": 8,
+  "noise_scale": 0.1,
+  "old_epochs": 300,
+  "target_id_epochs": 300,
+  "epochs": 300,
+  "lr": 0.005,
+  "w_B_sp": 0.01,
+  "rank_rtol": 0.001,
+  "threshold": null,
+  "device": "cpu"
+}

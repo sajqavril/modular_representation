@@ -1,0 +1,2 @@
+case,data_seed,fn,forgetting,fp,g_old,gate_acc,gate_scores,n_active,n_new,old_reference_MCC,plasticity_mcc,post_adaptation_top_k_MCC,target_profile_match,target_rank,tn,tp,train_seed
+case4_z1z3z4,0,0,0.0,0,"[1.0, 0.0]",1.0,"[0.9998829364776611, 0.7646335363388062]",1,2,0.999557226896286,0.9993382692337036,0.999557226896286,"[[0, 1, 0.9989485740661621]]",3,1,1,0
