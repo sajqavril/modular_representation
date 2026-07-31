@@ -1,5 +1,7 @@
 # Code Repo for _MoRe: Modular Representations for Principled Continual Representation Learning on Sequential Data_
 
+*The updated gating mechanism has been updated in `synthetic/synthetic_adaptation`, and the original version is saved at `synthetic/synthetic_adaptation_archived` for comparison.*
+
 ## Overview
 
 There are two directories corresponding to synthetic studies and real-world LLM activation evaluations, namely, `synthetic/` and `realworld/`.
