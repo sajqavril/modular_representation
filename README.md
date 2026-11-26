@@ -1,6 +1,6 @@
-# Code Repo for _MoRe: Modular Representations for Principled Continual Representation Learning on Sequential Data_
+# Code Repo for _MoRe: Modular Representations for Continual Representation Learning on Sequential Data_
 
-*The updated gating mechanism has been updated in `synthetic/synthetic_adaptation`, and the original version is saved at `synthetic/synthetic_adaptation_archived` for comparison.*
+This work is accepted at Neurips 2026 Poster. 
 
 ## Overview
 
